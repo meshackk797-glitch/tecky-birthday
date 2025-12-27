@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Tecky ✨</title>
+
+  <style>
+    :root{
+      --ink:#ffffff;
+      --rose:#e6c07b; /* champagne gold accent */
+      --soft:#ffffffcc;
+      --glass:rgba(255,255,255,.10);
+      --shadow:0 30px 70px rgba(0,0,0,.55);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, #1a1a1f 0%, #07070a 45%, #040406 100%),
+        linear-gradient(180deg,#0b0b10,#050507);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--ink);overflow:hidden;position:relative;
+      font-family: "Playfair Display", "Georgia", serif;
+      letter-spacing:.2px;
+    }
+
+    /* subtle vignette */
+    body:after{
+      content:"";position:fixed;inset:0;
+      box-shadow:inset 0 0 120px rgba(0,0,0,.7);
+      pointer-events:none;z-index:0;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      backdrop-filter: blur(18px);
+      border-radius:26px;
+      padding:36px 30px;
+      max-width:420px;width:92%;text-align:center;
+      box-shadow:var(--shadow);
+      animation: rise 1.6s ease both;
+      position:relative;z-index:2;margin:18px 0;
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    @keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+    h1{
+      font-size:2.2rem;margin-bottom:10px;color:var(--rose);
+      text-shadow:0 6px 20px rgba(255,158,181,.25)
+    }
+
+    .subtitle{color:var(--soft);margin-bottom:22px;font-size:1rem}
+
+    .photo{
+      width:172px;height:172px;border-radius:50%;object-fit:cover;
+      border:4px solid rgba(255,255,255,.35);
+      margin:18px auto 20px;box-shadow:0 14px 28px rgba(0,0,0,.45)
+    }
+
+    .message{color:#fff;line-height:1.75;margin-bottom:26px;font-size:1.02rem}
+
+    .btn{
+      background:linear-gradient(135deg,#ff6a8a,#ffb3c1);
+      color:#fff;padding:14px 28px;border:none;border-radius:999px;
+      font-size:1rem;cursor:pointer;
+      box-shadow:0 14px 28px rgba(0,0,0,.35);
+      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease
+    }
+    .btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 22px 42px rgba(0,0,0,.45);filter:saturate(1.05)}
+
+    footer{margin-top:22px;font-size:.8rem;color:#ddd}
+
+    /* Overlay */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:10}
+    .overlay button{font-size:1.05rem;padding:16px 36px;border-radius:999px;border:none;cursor:pointer;background:#fff;color:#111;font-weight:600;box-shadow:0 16px 36px rgba(0,0,0,.45)}
+
+    /* Confetti burst (soft) */
+    .confetti{position:fixed;width:10px;height:10px;border-radius:2px;z-index:20;animation:burst 1.3s ease-out forwards}
+    @keyframes burst{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--x),var(--y)) scale(.6);opacity:0}}
+
+    /* Typing */
+    #typedMessage{white-space:pre-wrap;color:#fff;line-height:1.9;font-size:1.05rem;letter-spacing:.35px}
+    .cursor{display:inline-block;width:8px;margin-left:2px;background:#fff;animation:blink 1s steps(1) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* Floating symbols (behind) */
+    .heart{position:fixed;opacity:.12;animation:float 9s ease-in-out infinite;z-index:1;filter:blur(.2px)}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-24px)}100%{transform:translateY(0)} }
+
+    /* Subtle sparkles */
+    .spark{position:fixed;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.35;animation:twinkle 3.5s ease-in-out infinite;z-index:1}
+    @keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.6}}50%{transform:translateY(-26px)}100%{transform:translateY(0)}}
+
+    /* Gentle glow when revealed */
+    .glow{animation:glow 2.2s ease both}
+    @keyframes glow{0%{box-shadow:0 0 0 rgba(255,158,181,0)}50%{box-shadow:0 0 42px rgba(255,158,181,.35)}100%{box-shadow:var(--shadow)}}
+  </style>
+</head>
+
+<body>
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="overlay" id="overlay">
+    <button id="openBtn">Tap to Open ✨</button>
+  </div>
+
+  <div class="card" id="card">
+    <h1>Happy Birthday, Tecky 16🎂17</h1>
+    <p class="subtitle">A quiet little moment, made just for you</p>
+    <p class="message">May today feel gentle and bright — full of smiles, warm moments, and small reminders of how special you are. Happy Birthday 🤍</p>
+    <button class="btn" onclick="celebrate()">Enjoy Your Day ✨</button>
+    <footer>With care & sincerity</footer>
+  </div>
+
+  <div class="card" id="surpriseCard" style="display:none;">
+    <h1>Just For You 💌</h1>
+    <p id="typedMessage"></p>
+    <footer>— always wishing you well</footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn=document.getElementById('openBtn');
+      if(btn){ btn.addEventListener('click', startExperience); }
+    });
+    const messageText = `Tecky ✨
+
+Take a breath…
+Let this moment settle.
+
+There’s something about the way you move through the world — calm, genuine, quietly playful — that makes ordinary moments feel better just by being there.
+
+As this message unfolds, I hope you feel how intentional this is. Every word, every pause, every detail — chosen with care.
+
+On your birthday, may you feel celebrated without noise, appreciated without pressure, and smiled at for simply being you.
+
+Here’s to laughter that sneaks up on you, to courage when you need it, and to joy that stays longer than expected.
+
+Happy Birthday, Tecky 🤍
+from mesh🤗`;
+
+    let index = 0; let cursor;
+
+    function startExperience(){
+      try{
+        softBurst();
+        setTimeout(()=>{
+          const m=document.getElementById('bgMusic');
+          if(m){ m.volume=0; m.play().catch(()=>{}); fadeInMusic(m); }
+          document.getElementById('overlay').style.display='none';
+        },320);
+      }catch(e){console.error(e)}
+    });
+        fadeInMusic(m);
+        document.getElementById('overlay').style.display='none';
+      },320);
+    }
+
+    function fadeInMusic(m){let v=0; const t=setInterval(()=>{v+=.03; m.volume=Math.min(v,.6); if(v>=.6) clearInterval(t)},120)}
+
+    function softBurst(){
+      const colors=['#ff9eb5','#ffd1dc','#fff1f4','#ffb3c1'];
+      const cx=innerWidth/2, cy=innerHeight/2;
+      for(let i=0;i<36;i++){
+        const d=document.createElement('div'); d.className='confetti';
+        d.style.background=colors[Math.floor(Math.random()*colors.length)];
+        d.style.left=cx+'px'; d.style.top=cy+'px';
+        d.style.setProperty('--x',(Math.random()*420-210)+'px');
+        d.style.setProperty('--y',(Math.random()*420-210)+'px');
+        document.body.appendChild(d); setTimeout(()=>d.remove(),1300)
+      }
+    }
+
+    function celebrate(){
+      softBurst();
+      document.getElementById('card').style.display='none';
+      const s=document.getElementById('surpriseCard'); s.style.display='block'; s.classList.add('glow');
+      index=0; const t=document.getElementById('typedMessage'); t.innerHTML='';
+      cursor=document.createElement('span'); cursor.className='cursor'; t.appendChild(cursor);
+      typeMessage();
+    }
+
+    function typeMessage(){
+      const t=document.getElementById('typedMessage');
+      if(index<messageText.length){
+        const ch=messageText.charAt(index);
+        cursor.remove();
+        t.innerHTML += ch==='\n' ? '<br>' : ch;
+        t.appendChild(cursor);
+        index++;
+        const pause = (ch===','||ch==='.'||ch==='—') ? 260 : 115;
+        setTimeout(typeMessage,pause);
+      } else { cursor.remove(); }
+    }
+
+    // floating symbols
+    for(let i=0;i<22;i++){
+      const h=document.createElement('div'); h.className='heart'; h.textContent='✨';
+      h.style.left=Math.random()*100+'vw'; h.style.top=Math.random()*100+'vh';
+      h.style.fontSize=(14+Math.random()*22)+'px'; h.style.animationDuration=(8+Math.random()*8)+'s';
+      document.body.appendChild(h);
+    }
+
+    // sparkles
+    for(let i=0;i<40;i++){
+      const s=document.createElement('div'); s.className='spark';
+      s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh';
+      s.style.animationDelay=(Math.random()*3)+'s';
+      document.body.appendChild(s);
+    }
